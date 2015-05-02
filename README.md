@@ -4,9 +4,9 @@ depending on the specified criteria, e.g. the adjusted R^2 or p-values.
 
 ##Supported methods
 * forward selection, based on adjusted R^2 (function `stepwise.fwd.adjR2`)
-* backward elimination, based on adjusted R^2 (_not implemented yet_)
+* backwards elimination, based on adjusted R^2 (function `stepwise.bck.adjR2`)
 * forward selection, based on coefficients' p-values (_not implemented yet_)
-* backward elimination, based on coefficients' p-values (_not implemented yet_)
+* backwards elimination, based on coefficients' p-values (_not implemented yet_)
 
 ##Usage
 Just call the command `source("stepwise.R")` and then call any function

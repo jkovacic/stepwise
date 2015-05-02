@@ -269,3 +269,104 @@ stepwise.fwd.adjR2 <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
     return( lm(formula, data=dframe) );
   }
 }
+
+
+
+stepwise.bck.adjR2 <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
+{
+  # Performs the stepwise regression algorithm, based on backwards elimination 
+  # of predictors and using the adjusted R^2 as criteria.
+  #
+  # Possibly the data frame should be prepocessed prior to passing to this
+  # function. For instance, undesired variables are recommended to be removed
+  # from the data frame, values of factor variables must be converted to strings,
+  # desired interactions should be done beforehand and appended to the data frame, etc.
+  #
+  # Args:
+  #   dframe: data frame
+  #   resp: name of the response variable as a character value
+  #   inc: an optional list of names of explanatory variables that 
+  #        must be included into the final model
+  #   ret.expl.vars: if TRUE, the function will return a list of selected
+  #                  exlanatory variables, otherwise a model including
+  #                  the selected variables
+  #
+  # Returns:
+  #   see 'ret.expl.vars'
+  
+  
+  
+  # Short description of the algorithm:
+  #
+  # - start with a full model (with all variables included)
+  # - drop one variable at a time, fit a model, record the adjusted R^2 for each one
+  # - pick the model with the highest adjusted R^2
+  # - repeat the procedure until the adjusted R^2 does not increase anymore
+  
+  
+  # sanity check
+  .check.validity(d.frame=dframe, resp.var=resp, inc.vars=inc);
+  
+  # Extract all variables' names
+  df.vars <- as.list(names(dframe));
+  
+  # And remove the response variable
+  df.vars <- df.vars[ df.vars != resp ];
+  
+  # additionally remove all 'inc' variables if given
+  if ( !is.null(inc) )
+  {
+    for ( var in inc )
+    {
+      df.vars <- df.vars[ df.vars != var ];
+    }
+  }
+  
+  # Current adjusted R^2, initially set to 0
+  adj.R2 <- 0.0;
+  
+  # Iterate the loop until 'df.vars' is empty or it is interrupted beforehand
+  # due to no increase of 'adj.R2'
+  while ( length(df.vars) > 0 )
+  {
+    r2s <- sapply(df.vars, function(v)
+    {
+      # A temporary list of predictors w/o 'v':
+      pred <- df.vars[ df.vars != v ];
+      mdl <- lm( .create.lm.formula(resp, c(pred, inc)), data=dframe );
+      return( summary(mdl)$adj.r.squared );
+    } );
+    
+    # find the model with the highest adjusted R^2 and check if this
+    # value has increased w.r.t. the current model
+    r2.max <- max(r2s);
+    if ( r2.max > adj.R2 )
+    {
+      # Update the maximum adjusted R^2
+      adj.R2 <- r2.max;
+      
+      # Index of the maximum adjusted R^2.
+      # If there are multiple such elements, just take the index of the first one
+      idx <- which(r2s==r2.max)[1];
+      
+      # Remove the variable from 'df.vars'
+      df.vars[ idx ] <- NULL;
+    }
+    else
+    {
+      # Adjusted R^2 has not increased, terminate the while loop
+      break;  # out of while
+    }
+  }  # while
+  
+  # Finally return the value requested by 'ret.expl.vars'
+  if ( TRUE==ret.expl.vars )
+  {
+    return( c(df.vars, inc) );
+  }
+  else
+  {
+    formula <- .create.lm.formula(resp, c(df.vars, inc));
+    return( lm(formula, data=dframe) );
+  }
+}
