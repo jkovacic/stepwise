@@ -44,6 +44,12 @@
     stop("\'alpha\' is not a numeric value");
   }
   
+  # additionally it must be a scalar:
+  if ( 1 != length(alpha) )
+  {
+    stop("\'alpha\' is not a scalar");
+  }
+  
   # it must be in the range between 0.0 and 1.0:
   if ( alpha <= 0.0 || alpha >= 1.0 )
   {
@@ -51,7 +57,7 @@
   }
   
   
-  # 'resp.va'r is a variable's name and must be a character value
+  # 'resp.var' is a variable's name and must be a character value
   if ( FALSE == is.character(resp.var) )
   {
     stop("\'resp.var\' is not a character string");
@@ -82,6 +88,12 @@
     if ( FALSE == is.list(inc.vars) )
     {
       stop("\'inc.vars\' is not a list");
+    }
+    
+    # the list should not be empty...
+    if ( 0 == length(inc.vars) )
+    {
+      stop("A non-null list \'inc.vars\' is empty");
     }
     
     # each list's element must be checked....
@@ -253,7 +265,7 @@ stepwise.fwd.adjR2 <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
   }
   else
   {
-    formula <- .create.lm.formula(resp, expl.vars)
+    formula <- .create.lm.formula(resp, expl.vars);
     return( lm(formula, data=dframe) );
   }
 }
