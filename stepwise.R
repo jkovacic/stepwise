@@ -212,10 +212,7 @@ stepwise.fwd.adjR2 <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
     expl.vars <- c(expl.vars, inc);
     
     # And remove each required variable separately
-    for ( var in inc )
-    {
-      df.vars <- df.vars[ df.vars != var ];
-    }
+    df.vars <- df.vars[ !(df.vars %in% inc) ];
     
     # Update the initial adjusted R2:
     mdl <- lm ( .create.lm.formula(resp.var=resp, vars=expl.vars), data=dframe);
@@ -308,18 +305,15 @@ stepwise.bck.adjR2 <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
   .check.validity(d.frame=dframe, resp.var=resp, inc.vars=inc);
   
   # Extract all variables' names
-  df.vars <- as.list(names(dframe));
+  expl.vars <- as.list(names(dframe));
   
   # And remove the response variable
-  df.vars <- df.vars[ df.vars != resp ];
+  expl.vars <- expl.vars[ expl.vars != resp ];
   
   # additionally remove all 'inc' variables if given
   if ( !is.null(inc) )
   {
-    for ( var in inc )
-    {
-      df.vars <- df.vars[ df.vars != var ];
-    }
+    expl.vars <- expl.vars[ !(expl.vars %in% inc) ];
   }
   
   # Current adjusted R^2, initially set to 0
@@ -327,12 +321,12 @@ stepwise.bck.adjR2 <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
   
   # Iterate the loop until 'df.vars' is empty or it is interrupted beforehand
   # due to no increase of 'adj.R2'
-  while ( length(df.vars) > 0 )
+  while ( length(expl.vars) > 0 )
   {
-    r2s <- sapply(df.vars, function(v)
+    r2s <- sapply(expl.vars, function(v)
     {
       # A temporary list of predictors w/o 'v':
-      pred <- df.vars[ df.vars != v ];
+      pred <- expl.vars[ expl.vars != v ];
       mdl <- lm( .create.lm.formula(resp, c(pred, inc)), data=dframe );
       return( summary(mdl)$adj.r.squared );
     } );
@@ -350,7 +344,7 @@ stepwise.bck.adjR2 <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
       idx <- which(r2s==r2.max)[1];
       
       # Remove the variable from 'df.vars'
-      df.vars[ idx ] <- NULL;
+      expl.vars[ idx ] <- NULL;
     }
     else
     {
@@ -362,11 +356,11 @@ stepwise.bck.adjR2 <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
   # Finally return the value requested by 'ret.expl.vars'
   if ( TRUE==ret.expl.vars )
   {
-    return( c(df.vars, inc) );
+    return( c(expl.vars, inc) );
   }
   else
   {
-    formula <- .create.lm.formula(resp, c(df.vars, inc));
+    formula <- .create.lm.formula(resp, c(expl.vars, inc));
     return( lm(formula, data=dframe) );
   }
 }
