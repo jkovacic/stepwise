@@ -211,7 +211,7 @@ stepwise.fwd.adjR2 <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
     # Append required variables to 'expl.vars'
     expl.vars <- c(expl.vars, inc);
     
-    # And remove each required variable separately
+    # And remove all required variables
     df.vars <- df.vars[ !(df.vars %in% inc) ];
     
     # Update the initial adjusted R2:
