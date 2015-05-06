@@ -232,16 +232,13 @@ stepwise.fwd.adjR2 <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
     
     # find the model with the highest adjusted R^2 and check if this
     # value has increased w.r.t. the current model
-    r2.max <- max(r2s);
+    idx <- which.max(r2s);
+    r2.max <- r2s[idx];
     if ( r2.max > adj.R2 )
     {
       # Update the maximum adjusted R^2
       adj.R2 <- r2.max;
-      
-      # Index of the maximum adjusted R^2.
-      # If there are multiple such elements, just take the index of the first one
-      idx <- which(r2s==r2.max)[1];
-      
+
       # Append the variable to 'expl.vars'
       expl.vars <- c(expl.vars, df.vars[idx]);
       
@@ -333,16 +330,13 @@ stepwise.bck.adjR2 <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
     
     # find the model with the highest adjusted R^2 and check if this
     # value has increased w.r.t. the current model
-    r2.max <- max(r2s);
+    idx <- which.max(r2s);
+    r2.max <- r2s[idx];
     if ( r2.max > adj.R2 )
     {
       # Update the maximum adjusted R^2
       adj.R2 <- r2.max;
-      
-      # Index of the maximum adjusted R^2.
-      # If there are multiple such elements, just take the index of the first one
-      idx <- which(r2s==r2.max)[1];
-      
+    
       # Remove the variable from 'df.vars'
       expl.vars[ idx ] <- NULL;
     }
