@@ -202,8 +202,9 @@ stepwise.fwd.adjR2 <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
   # List of selected explanatory variables - initially empty
   expl.vars <- list();
   
-  # Current adjusted R^2, initially set to 0
-  adj.R2 <- 0.0;
+  # Current adjusted R^2, initially set to the model with the interceptor only
+  mdl <- lm( .create.lm.formula(resp.var=resp, vars="-1"), data=dframe );
+  adj.R2 <- summary(mdl)$adj.r.squared;
   
   # Only applicable if 'inc' is not empty
   if ( !is.null(inc) )
