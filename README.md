@@ -1,6 +1,6 @@
 ##About
 A simple R library for stepwise selection of the "best" linear model,
-depending on the selected criteria, such as adjusted R<sup>2</sup>,
+depending on the selected criterion, such as adjusted R<sup>2</sup>,
 p-values et al.
 
 ##Supported methods
