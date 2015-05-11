@@ -29,23 +29,65 @@ dtframe <- mtcars;
 rsp <- "mpg";
 incl <- list("drat", "vs");
 
-cat(" = = = Forward selection, adjusted R^2 as criteria = = =\n");
+cat("= = = Forward selection, adjusted R^2 as criterion = = =\n");
 
-cat("\nA list of \"significant\" variables, with \'drat\' and \'vs\' required:\n");
+cat("\n= A list of \"significant\" variables, with \'drat\' and \'vs\' required: =\n");
 mdl <- stepwise.fwd.adjR2(dtframe, rsp, incl);
 print(mdl);
 
-cat("A fitted model with no required expl. variables:\n");
+cat("= A fitted model with no required expl. variables: =\n");
 mdl <- stepwise.fwd.adjR2(dtframe, rsp, ret.expl.vars=FALSE);
 print(mdl);
 
 
-cat(" = = = Backwards elimination, adjusted R^2 as criteria = = =\n");
+cat("= = = Backwards elimination, adjusted R^2 as criterion = = =\n");
 
-cat("\nA list of \"significant\" variables, with \'drat\' and \'vs\' required:\n");
+cat("\n= A list of \"significant\" variables, with \'drat\' and \'vs\' required: =\n");
 mdl <- stepwise.bck.adjR2(dtframe, rsp, incl);
 print(mdl);
 
-cat("A fitted model with no required expl. variables:\n");
+cat("= A fitted model with no required expl. variables: =\n");
 mdl <- stepwise.bck.adjR2(dtframe, rsp, ret.expl.vars=FALSE);
+print(mdl);
+
+
+cat("= = = Forward selection, AIC as criterion = = =\n\n");
+
+cat("= A fitted model with no required expl. variables: =\n");
+mdl <- stepwise.fwd.aic(dtframe, rsp, ret.expl.vars=FALSE);
+print(mdl);
+
+
+cat("= = = Backwards elimination, AIC as criterion = = =\n\n");
+
+cat("= A fitted model with no required expl. variables: =\n");
+mdl <- stepwise.bck.aic(dtframe, rsp, ret.expl.vars=FALSE);
+print(mdl);
+
+
+cat("= = = Forward selection, BIC as criterion = = =\n\n");
+
+cat("= A fitted model with no required expl. variables: =\n");
+mdl <- stepwise.fwd.bic(dtframe, rsp, ret.expl.vars=FALSE);
+print(mdl);
+
+
+cat("= = = Backwards elimination, BIC as criterion = = =\n\n");
+
+cat("= A fitted model with no required expl. variables: =\n");
+mdl <- stepwise.bck.bic(dtframe, rsp, ret.expl.vars=FALSE);
+print(mdl);
+
+
+cat("= = = Forward selection, Mallows' Cp as criterion = = =\n\n");
+
+cat("= A fitted model with no required expl. variables: =\n");
+mdl <- stepwise.fwd.mallowsCp(dtframe, rsp, ret.expl.vars=FALSE);
+print(mdl);
+
+
+cat("= = = Backwards elimination, Mallows' Cp as criterion = = =\n\n");
+
+cat("= A fitted model with no required expl. variables: =\n");
+mdl <- stepwise.bck.mallowsCp(dtframe, rsp, ret.expl.vars=FALSE);
 print(mdl);

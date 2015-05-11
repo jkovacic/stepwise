@@ -6,8 +6,14 @@ p-values et al.
 ##Supported methods
 * forward selection, based on adjusted R<sup>2</sup> (function `stepwise.fwd.adjR2`)
 * backwards elimination, based on adjusted R<sup>2</sup> (function `stepwise.bck.adjR2`)
-* forward selection, based on coefficients' p-values (_not implemented yet_)
-* backwards elimination, based on coefficients' p-values (_not implemented yet_)
+* forward selection, based on Mallows' Cp (function `stepwise.fwd.mallowsCp`)
+* backwards elimination, based on Mallows' Cp (function `stepwise.bck.mallowsCp`)
+* forward selection, based on Aikake's Information Criterion (function `stepwise.fwd.aic`)
+* backwards elimination, based on Aikake's Information Criterion (function `stepwise.bck.aic`)
+* forward selection, based on Bayesian Information Criterion (function `stepwise.fwd.bic`)
+* backwards elimination, based on Bayesian Information Criterion (function `stepwise.bck.bic`)
+* forward selection, based on significance of coefficients' p-values (_not implemented yet_)
+* backwards elimination, based on significance of coefficients' p-values (_not implemented yet_)
 
 ##Usage
 Just call the command `source('stepwise.R')` and then call any function

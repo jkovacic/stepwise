@@ -164,6 +164,9 @@ source('critfunc.R');
   #
   # The following criteria are currently supported:
   # - adjusted R^2 (crit="adjR2")
+  # - Mallows' Cp (crit="mallowsCp")
+  # - Aikake's Information Criterion (crit="aic")
+  # - Bayesian Information Criterion (crit="bic")
   #
   # Args:
   #   dframe: data frame
@@ -205,6 +208,13 @@ source('critfunc.R');
   # List of selected explanatory variables - initially empty
   expl.vars <- list();
   
+  # If the selected criteria is Mallows' Cp, the MSE of the full model is needed
+  msef <- 0.0;
+  if ( "mallowsCp" == critf )
+  {
+    msef <- .crit.msef(dframe, resp);
+  }
+  
   # Only applicable if 'inc' is not empty
   if ( !is.null(inc) )
   {
@@ -216,14 +226,14 @@ source('critfunc.R');
     
     # Update the initial value of the criterion:
     mdl <- lm ( .create.lm.formula(resp.var=resp, vars=expl.vars), data=dframe);
-    crit <- switch( critf, "adjR2" = .crit.adjR2(mdl) );
   }
   else
   {
     # Set the current value of criterion to an empty model (with the interceptor only)
     mdl <- lm( .create.lm.formula(resp.var=resp, vars="1"), data=dframe );
-    crit <- switch( critf, "adjR2" = .crit.adjR2(mdl) );
   }
+  
+  crit <- .crit.criterion( critf, mdl, msef );
   
   # Iterate the loop until 'df.vars' is empty or it is interrupted beforehand
   # due to no improved of the criterion
@@ -233,7 +243,7 @@ source('critfunc.R');
     cs <- sapply( df.vars, function(v) 
     {
       mdl <- lm(.create.lm.formula(resp, c(expl.vars, v)), data=dframe );
-      return( switch(critf, "adjR2" = .crit.adjR2(mdl)) );
+      return( .crit.criterion( critf, mdl, msef ) );
     } );
     
     # find the model with the best criterion and check if this
@@ -288,6 +298,9 @@ source('critfunc.R');
   #
   # The following criteria are currently supported:
   # - adjusted R^2 (crit="adjR2")
+  # - Mallows' Cp (crit="mallowsCp")
+  # - Aikake's Information Criterion (crit="aic")
+  # - Bayesian Information Criterion (crit="bic")
   #
   # Args:
   #   dframe: data frame
@@ -331,7 +344,15 @@ source('critfunc.R');
   
   # Current value of the criterion, initially set to the value of the full model
   mdl <- lm( .create.lm.formula( resp.var=resp, vars="."), data=dframe);
-  crit <- switch(critf, "adjR2" = .crit.adjR2(mdl) );
+  
+  # If the selected criteria is Mallows' Cp, MSE of the full model will be needed:
+  msef <- 0.0
+  if ( "mallowsCp"==critf )
+  {
+    msef <- .crit.msef(full.mdl=mdl); 
+  }
+  
+  crit <- .crit.criterion( critf, mdl, msef );
   
   # Iterate the loop until 'df.vars' is empty or it is interrupted beforehand
   # due to no improvement of criterion
@@ -342,7 +363,7 @@ source('critfunc.R');
       # A temporary list of predictors w/o 'v':
       pred <- expl.vars[ expl.vars != v ];
       mdl <- lm( .create.lm.formula(resp, c(pred, inc)), data=dframe );
-      return( switch(critf, "adjR2" = .crit.adjR2(mdl)) );
+      return( .crit.criterion( critf, mdl, msef ) ); 
     } );
     
     # find the model with the best value of criterion and check if this
@@ -389,7 +410,7 @@ source('critfunc.R');
 stepwise.fwd.adjR2 <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
 {
   # Performs the stepwise regression algorithm, based on forward selection 
-  # of predictors and using the adjusted R^2 as criteria.
+  # of predictors and using the adjusted R^2 as criterion.
   #
   # Possibly the data frame should be prepocessed prior to passing to this
   # function. For instance, undesired variables are recommended to be removed
@@ -409,12 +430,12 @@ stepwise.fwd.adjR2 <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
   #   see 'ret.expl.vars'
   
   return( .stepwise.fwd(
-        dframe=dframe, 
-        resp=resp, 
-        inc=inc, 
-        ret.expl.vars=ret.expl.vars, 
-        critf="adjR2",
-        minimize=FALSE ) );
+        dframe = dframe, 
+        resp = resp, 
+        inc = inc, 
+        ret.expl.vars = ret.expl.vars, 
+        critf = "adjR2",
+        minimize = FALSE ) );
 }
 
 
@@ -422,7 +443,7 @@ stepwise.fwd.adjR2 <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
 stepwise.bck.adjR2 <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
 {
   # Performs the stepwise regression algorithm, based on backwards elimination 
-  # of predictors and using the adjusted R^2 as criteria.
+  # of predictors and using the adjusted R^2 as criterion.
   #
   # Possibly the data frame should be prepocessed prior to passing to this
   # function. For instance, undesired variables are recommended to be removed
@@ -442,10 +463,208 @@ stepwise.bck.adjR2 <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
   #   see 'ret.expl.vars'
   
   return( .stepwise.bck(
-        dframe=dframe, 
-        resp=resp, 
-        inc=inc, 
-        ret.expl.vars=ret.expl.vars, 
-        critf="adjR2",
-        minimize=FALSE ) );
+        dframe = dframe, 
+        resp = resp, 
+        inc = inc, 
+        ret.expl.vars = ret.expl.vars, 
+        critf = "adjR2",
+        minimize = FALSE ) );
+}
+
+
+
+stepwise.fwd.mallowsCp <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
+{
+  # Performs the stepwise regression algorithm, based on forward selection 
+  # of predictors and using the Mallows' Cp as criterion.
+  #
+  # Possibly the data frame should be prepocessed prior to passing to this
+  # function. For instance, undesired variables are recommended to be removed
+  # from the data frame, values of factor variables must be converted to strings,
+  # desired interactions should be done beforehand and appended to the data frame, etc.
+  #
+  # Args:
+  #   dframe: data frame
+  #   resp: name of the response variable as a character value
+  #   inc: an optional list of names of explanatory variables that 
+  #        must be included into the final model
+  #   ret.expl.vars: if TRUE, the function will return a list of selected
+  #                  exlanatory variables, otherwise a model including
+  #                  the selected variables
+  #
+  # Returns:
+  #   see 'ret.expl.vars'
+  
+  return( .stepwise.fwd(
+    dframe = dframe, 
+    resp = resp, 
+    inc = inc, 
+    ret.expl.vars = ret.expl.vars, 
+    critf = "mallowsCp",
+    minimize = TRUE ) );
+}
+
+
+
+stepwise.bck.mallowsCp <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
+{
+  # Performs the stepwise regression algorithm, based on backwards elimination 
+  # of predictors and using the Mallows' Cp as criterion.
+  #
+  # Possibly the data frame should be prepocessed prior to passing to this
+  # function. For instance, undesired variables are recommended to be removed
+  # from the data frame, values of factor variables must be converted to strings,
+  # desired interactions should be done beforehand and appended to the data frame, etc.
+  #
+  # Args:
+  #   dframe: data frame
+  #   resp: name of the response variable as a character value
+  #   inc: an optional list of names of explanatory variables that 
+  #        must be included into the final model
+  #   ret.expl.vars: if TRUE, the function will return a list of selected
+  #                  exlanatory variables, otherwise a model including
+  #                  the selected variables
+  #
+  # Returns:
+  #   see 'ret.expl.vars'
+  
+  return( .stepwise.bck(
+    dframe = dframe, 
+    resp = resp, 
+    inc = inc, 
+    ret.expl.vars = ret.expl.vars, 
+    critf = "mallowsCp",
+    minimize = TRUE ) );
+}
+
+
+
+stepwise.fwd.aic <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
+{
+  # Performs the stepwise regression algorithm, based on forward selection 
+  # of predictors and using the Aikake's Information Criterion (AIC) as criterion.
+  #
+  # Possibly the data frame should be prepocessed prior to passing to this
+  # function. For instance, undesired variables are recommended to be removed
+  # from the data frame, values of factor variables must be converted to strings,
+  # desired interactions should be done beforehand and appended to the data frame, etc.
+  #
+  # Args:
+  #   dframe: data frame
+  #   resp: name of the response variable as a character value
+  #   inc: an optional list of names of explanatory variables that 
+  #        must be included into the final model
+  #   ret.expl.vars: if TRUE, the function will return a list of selected
+  #                  exlanatory variables, otherwise a model including
+  #                  the selected variables
+  #
+  # Returns:
+  #   see 'ret.expl.vars'
+  
+  return( .stepwise.fwd(
+    dframe = dframe, 
+    resp = resp, 
+    inc = inc, 
+    ret.expl.vars = ret.expl.vars, 
+    critf = "aic",
+    minimize = TRUE ) );
+}
+
+
+
+stepwise.bck.aic <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
+{
+  # Performs the stepwise regression algorithm, based on backwards elimination 
+  # of predictors and using the Aikake's Information Criterion (AIC) as criterion.
+  #
+  # Possibly the data frame should be prepocessed prior to passing to this
+  # function. For instance, undesired variables are recommended to be removed
+  # from the data frame, values of factor variables must be converted to strings,
+  # desired interactions should be done beforehand and appended to the data frame, etc.
+  #
+  # Args:
+  #   dframe: data frame
+  #   resp: name of the response variable as a character value
+  #   inc: an optional list of names of explanatory variables that 
+  #        must be included into the final model
+  #   ret.expl.vars: if TRUE, the function will return a list of selected
+  #                  exlanatory variables, otherwise a model including
+  #                  the selected variables
+  #
+  # Returns:
+  #   see 'ret.expl.vars'
+  
+  return( .stepwise.bck(
+    dframe = dframe, 
+    resp = resp, 
+    inc = inc, 
+    ret.expl.vars = ret.expl.vars, 
+    critf = "aic",
+    minimize = TRUE ) );
+}
+
+
+
+stepwise.fwd.bic <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
+{
+  # Performs the stepwise regression algorithm, based on forward selection 
+  # of predictors and using the Bayesian Information Criterion (BIC) as criterion.
+  #
+  # Possibly the data frame should be prepocessed prior to passing to this
+  # function. For instance, undesired variables are recommended to be removed
+  # from the data frame, values of factor variables must be converted to strings,
+  # desired interactions should be done beforehand and appended to the data frame, etc.
+  #
+  # Args:
+  #   dframe: data frame
+  #   resp: name of the response variable as a character value
+  #   inc: an optional list of names of explanatory variables that 
+  #        must be included into the final model
+  #   ret.expl.vars: if TRUE, the function will return a list of selected
+  #                  exlanatory variables, otherwise a model including
+  #                  the selected variables
+  #
+  # Returns:
+  #   see 'ret.expl.vars'
+  
+  return( .stepwise.fwd(
+    dframe = dframe, 
+    resp = resp, 
+    inc = inc, 
+    ret.expl.vars = ret.expl.vars, 
+    critf = "bic",
+    minimize = TRUE ) );
+}
+
+
+
+stepwise.bck.bic <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
+{
+  # Performs the stepwise regression algorithm, based on backwards elimination 
+  # of predictors and using the Bayesian Information Criterion (BIC) as criterion.
+  #
+  # Possibly the data frame should be prepocessed prior to passing to this
+  # function. For instance, undesired variables are recommended to be removed
+  # from the data frame, values of factor variables must be converted to strings,
+  # desired interactions should be done beforehand and appended to the data frame, etc.
+  #
+  # Args:
+  #   dframe: data frame
+  #   resp: name of the response variable as a character value
+  #   inc: an optional list of names of explanatory variables that 
+  #        must be included into the final model
+  #   ret.expl.vars: if TRUE, the function will return a list of selected
+  #                  exlanatory variables, otherwise a model including
+  #                  the selected variables
+  #
+  # Returns:
+  #   see 'ret.expl.vars'
+  
+  return( .stepwise.bck(
+    dframe = dframe, 
+    resp = resp, 
+    inc = inc, 
+    ret.expl.vars = ret.expl.vars, 
+    critf = "bic",
+    minimize = TRUE ) );
 }
