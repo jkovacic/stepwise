@@ -63,7 +63,7 @@
   }
   else
   {
-    mdl <- lm( as.formula(paste(resp, " ~ .", sep="")), data=dframe);
+    mdl <- lm( as.formula(paste0(resp, " ~ .")), data=dframe);
   }
 
   # The MSE_full with 'p' predictors and 'n' observations
@@ -170,7 +170,7 @@
   #   BIC of 'mdl'
   
   
-  # AIC is evaluated as:
+  # BIC is evaluated as:
   #
   #                / SSE  \
   #   BIC = n * ln |----- | + p * ln(n)

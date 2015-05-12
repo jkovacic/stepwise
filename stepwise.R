@@ -150,7 +150,7 @@ source('critfunc.R');
   
   # Collapse the list into a single string,
   # concatenate it to the response variable
-  mdl.str <- paste(resp.var, " ~ ", paste(vars, collapse=" + "), sep="");
+  mdl.str <- paste0(resp.var, " ~ ", paste(vars, collapse=" + "));
   
   return (as.formula(mdl.str));
 }
