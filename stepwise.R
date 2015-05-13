@@ -118,14 +118,25 @@ source('critfunc.R');
       {
         stop("At least one explanatory variable is equal to the response variable");
       }
-    }
+    }  # for var
     
     # Finally check that there are no duplicates in the list:
     if ( 0 != anyDuplicated(inc.vars) )
     {
       stop("Duplicated variable names in \'inc.vars\'");
     }
-  }
+  }  # if !is.null(inc.vars)
+  
+  # Finally check that all factors (non-numeric variables)
+  # have at least 2 levels
+  for ( var in names(d.frame) )
+  {
+    if ( FALSE == is.numeric(d.frame[, var]) &&
+         length( levels(factor(d.frame[, var])) ) < 2 )
+    {
+      stop("One of factor variables does not contain at least 2 levels");
+    }
+  }  # for var
 }
 
 
@@ -142,15 +153,17 @@ source('critfunc.R');
   #   a formula to be passed to the function 'lm'
   
   
-  # Sanity check:
+  var.list <- vars;
+  
+  # If 'vars' is empty, return a call of an empty model
   if ( TRUE==is.null(vars) || 0==length(vars) )
   {
-    stop("Invalid list of explanatory variables");
+    var.list <- "1";
   }
   
   # Collapse the list into a single string,
   # concatenate it to the response variable
-  mdl.str <- paste0(resp.var, " ~ ", paste(vars, collapse=" + "));
+  mdl.str <- paste0(resp.var, " ~ ", paste(var.list, collapse=" + "));
   
   return (as.formula(mdl.str));
 }
