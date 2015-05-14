@@ -169,6 +169,72 @@ source('critfunc.R');
 }
 
 
+.pval.count.levels <- function(d.frame)
+{
+  # Counts the number of coefficients, the model will contain for
+  # each variable.
+  #
+  # For numeric variables, the result will always be 1.
+  # For factor (i.e. non-numeric) varibles, the result will be
+  # the number of levels, decreased by 1.
+  #
+  # Args:
+  #   d.frame - the data frame with variables of interest
+  #
+  # Returns:
+  #   a named integer vector with counts for each d.frame's variable
+  
+  # Start with an empty vector of integers
+  r <- integer();
+  
+  for ( var in names(d.frame) )
+  {
+    # default value for numeric variables
+    val <- 1L;
+    
+    # for factor (non-numeric) variables, adjust the 'val'
+    # to the number of levels, substracted by 1.
+    if ( FALSE == is.numeric(d.frame[, var]) )
+    {
+      val <- length( levels(factor(d.frame[, var])) ) - 1L;
+    }
+    
+    # Append it to 'r'
+    r <- c(r, val);
+    
+    # And finally give a name to the element
+    names(r)[length(r)] <- var;
+  }
+  
+  return(r);
+}
+
+
+.pval.getmin <- function(smdl, l=1)
+{
+  # Minimum p-value of the coefficients that belong to the same
+  # (factor) variable.
+  #
+  # Args:
+  #   smdl: summarized linear model (as returned by summary(lm(..)))
+  #   l: number of coefficients per variable of interest
+  #
+  # Returns:
+  #   minimum p-value of the variable's coefficients
+  
+  # coefficients' p-values are stored in the 4th column of mdls$coefficients
+  PVAL.COL <- 4L;
+  
+  # Starting index of the desired variable's coefficient
+  OFFSET <- 2L;
+  
+  # When a model is fitted, the desired variable will always be given first.
+  # Since the first coefficient is reseved for the intercept, the coefficents
+  # of interest start at idx=2
+  
+  return( min( smdl$coefficients[ OFFSET : (OFFSET+l-1L), PVAL.COL]) );
+}
+
 
 .stepwise.fwd <- function(dframe, resp, inc, ret.expl.vars, critf, minimize)
 {
@@ -680,4 +746,97 @@ stepwise.bck.bic <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
     ret.expl.vars = ret.expl.vars, 
     critf = "bic",
     minimize = TRUE ) );
+}
+
+
+
+stepwise.fwd.pval <- function(dframe, resp, alpha=0.05, inc=NULL, ret.expl.vars=TRUE)
+{
+  # Performs the stepwise regression algorithm, based on forward selection 
+  # of predictors and using coefficients' significance as criterion.
+  #
+  # Possibly the data frame should be prepocessed prior to passing to this
+  # function. For instance, undesired variables are recommended to be removed
+  # from the data frame, values of factor variables must be converted to strings,
+  # desired interactions should be done beforehand and appended to the data frame, etc.
+  #
+  # Args:
+  #   dframe: data frame
+  #   resp: name of the response variable as a character value
+  #   alpha: maximum significance level of coefficients' p-values
+  #   inc: an optional list of names of explanatory variables that 
+  #        must be included into the final model
+  #   ret.expl.vars: if TRUE, the function will return a list of selected
+  #                  exlanatory variables, otherwise a model including
+  #                  the selected variables
+  #
+  # Returns:
+  #   see 'ret.expl.vars'
+  
+  # sanity check
+  .check.validity(d.frame=dframe, resp.var=resp, alpha=alpha, inc.vars=inc);
+  
+  # nr. of levels for each variable
+  var.levels <- .pval.count.levels(dframe);
+  
+  # Extract all variables' names
+  df.vars <- as.list(names(dframe));
+  
+  # And remove the response variable
+  df.vars <- df.vars[ df.vars != resp ];
+  
+  # Also remove any inc. variables
+  if ( !is.null(inc) )
+  {
+    df.vars <- df.vars[ !(df.vars %in% inc) ];
+  }
+  
+  # List of selected explanatory variables - initially empty
+  expl.vars <- list();
+  
+  # Append 'inc' to 'expl.vars'
+  expl.vars <- c(expl.vars, inc);
+  
+  while ( length(df.vars) > 0 )
+  {
+    # a vector of coefficients' p-values
+    p.vals <- sapply(df.vars, function(v)
+    {
+      # The function '.pval.getmin' requires that the variable of interest ('v')
+      # is the first in the list of variables to fit a model
+      mdl <- summary(
+          lm ( .create.lm.formula( resp, c(v, expl.vars) ), data=dframe) );
+      
+      return( .pval.getmin(mdl, var.levels[v]) );
+    } );
+    
+    # Find the variable with the minimum p-value
+    idx <- which.min(p.vals);
+    
+    # And make sure it is statistically significant
+    if ( p.vals[idx] < alpha )
+    {
+      # If it is signidficant, append it to 'expl.vars'
+      expl.vars <- c(expl.vars, df.vars[idx]);
+      
+      # and remove it from 'df.vars'
+      df.vars[ idx ] <- NULL;
+    }
+    else
+    {
+      # Otherwise quit the loop
+      break;  # out of while
+    }
+  }  # while
+  
+  # Finally return the value requested by 'ret.expl.vars'
+  if ( TRUE==ret.expl.vars )
+  {
+    return(expl.vars);
+  }
+  else
+  {
+    formula <- .create.lm.formula(resp, expl.vars);
+    return( lm(formula, data=dframe) );
+  }
 }

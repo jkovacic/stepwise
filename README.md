@@ -12,7 +12,7 @@ p-values et al.
 * backwards elimination, based on Aikake's Information Criterion (function `stepwise.bck.aic`)
 * forward selection, based on Bayesian Information Criterion (function `stepwise.fwd.bic`)
 * backwards elimination, based on Bayesian Information Criterion (function `stepwise.bck.bic`)
-* forward selection, based on significance of coefficients' p-values (_not implemented yet_)
+* forward selection, based on significance of coefficients' p-values (function `stepwise.fwd.pval`)
 * backwards elimination, based on significance of coefficients' p-values (_not implemented yet_)
 
 ##Usage
