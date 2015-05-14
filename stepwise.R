@@ -210,7 +210,7 @@ source('critfunc.R');
 }
 
 
-.pval.getmin <- function(smdl, l=1)
+.pval.getmin <- function(smdl, l=1L)
 {
   # Minimum p-value of the coefficients that belong to the same
   # (factor) variable.
