@@ -773,6 +773,18 @@ stepwise.fwd.pval <- function(dframe, resp, alpha=0.05, inc=NULL, ret.expl.vars=
   # Returns:
   #   see 'ret.expl.vars'
   
+  
+  
+  # Short description of the algorithm:
+  #
+  # - start with an empty model (or with all required variables) and
+  #   add other expl. variables one by one
+  # - pick the most significant expl. variable (with the lowest p-value)
+  # - add remaining expl. vraibles one by one and pick the most significant one
+  # - repeat the procedure until of the remaining variables do not have
+  #   a significant p-value
+  
+  
   # sanity check
   .check.validity(d.frame=dframe, resp.var=resp, alpha=alpha, inc.vars=inc);
   
