@@ -210,14 +210,15 @@ source('critfunc.R');
 }
 
 
-.pval.getmin <- function(smdl, l=1L)
+.pval.getmin <- function(smdl, len, offset=1L)
 {
   # Minimum p-value of the coefficients that belong to the same
   # (factor) variable.
   #
   # Args:
   #   smdl: summarized linear model (as returned by summary(lm(..)))
-  #   l: number of coefficients per variable of interest
+  #   len: number of coefficients per variable of interest
+  #   offset: position of the first coeffient of interest (intercept excluded!)
   #
   # Returns:
   #   minimum p-value of the variable's coefficients
@@ -226,13 +227,14 @@ source('critfunc.R');
   PVAL.COL <- 4L;
   
   # Starting index of the desired variable's coefficient
-  OFFSET <- 2L;
+  #   Note: 1 is added for the intercept
+  pos <- 1L + offset;
   
   # When a model is fitted, the desired variable will always be given first.
   # Since the first coefficient is reseved for the intercept, the coefficents
-  # of interest start at idx=2
+  # of interest start at idx=1+offset
   
-  return( min( smdl$coefficients[ OFFSET : (OFFSET+l-1L), PVAL.COL]) );
+  return( min( smdl$coefficients[ pos : (pos+len-1L), PVAL.COL]) );
 }
 
 
@@ -315,7 +317,7 @@ source('critfunc.R');
   crit <- .crit.criterion( critf, mdl, msef );
   
   # Iterate the loop until 'df.vars' is empty or it is interrupted beforehand
-  # due to no improved of the criterion
+  # due to no improvement of the criterion
   while ( length(df.vars) > 0 )
   {
     # a vector of all models' criteria
