@@ -854,3 +854,106 @@ stepwise.fwd.pval <- function(dframe, resp, alpha=0.05, inc=NULL, ret.expl.vars=
     return( lm(formula, data=dframe) );
   }
 }
+
+
+
+stepwise.bck.pval <- function(dframe, resp, alpha=0.05, inc=NULL, ret.expl.vars=TRUE)
+{
+  # Performs the stepwise regression algorithm, based on backwards elimination 
+  # of predictors and using coefficients' significance as criterion.
+  #
+  # Possibly the data frame should be prepocessed prior to passing to this
+  # function. For instance, undesired variables are recommended to be removed
+  # from the data frame, values of factor variables must be converted to strings,
+  # desired interactions should be done beforehand and appended to the data frame, etc.
+  #
+  # Args:
+  #   dframe: data frame
+  #   resp: name of the response variable as a character value
+  #   alpha: maximum significance level of coefficients' p-values
+  #   inc: an optional list of names of explanatory variables that 
+  #        must be included into the final model
+  #   ret.expl.vars: if TRUE, the function will return a list of selected
+  #                  exlanatory variables, otherwise a model including
+  #                  the selected variables
+  #
+  # Returns:
+  #   see 'ret.expl.vars'
+  
+  
+  
+  # Short description of the algorithm:
+  #
+  # - start with a full model
+  # - exclude the least significant predictor and refit the model
+  # - repeat the procedure until all the remaining predictors are significant
+  
+  # sanity check
+  .check.validity(d.frame=dframe, resp.var=resp, alpha=alpha, inc.vars=inc);
+  
+  # nr. of levels for each variable
+  var.levels <- .pval.count.levels(dframe);
+  
+  # Extract all variables' names
+  expl.vars <- as.list(names(dframe));
+  
+  # And remove the response variable
+  expl.vars <- expl.vars[ expl.vars != resp ];
+  
+  # Also remove any inc. variables
+  if ( !is.null(inc) )
+  {
+    expl.vars <- expl.vars[ !(expl.vars %in% inc) ];
+  }
+  # Now 'expl.vars' contains the variables that may be excluded
+  
+  while ( length(expl.vars) > 0 )
+  {
+    # fit a model with the remaining 'expl.vars' and 'inc'
+    mdl <- summary( 
+        lm( .create.lm.formula(resp, c(expl.vars, inc)), data=dframe) );
+    
+    # index of the first coefficient of interest (initially 1)
+    off <- 1L;
+    
+    # a vector of coefficients' p-values
+    p.vals <- sapply(expl.vars, function(v)
+    {
+      # in case of a factor variable get the lowest applicable p-value
+      ret <- .pval.getmin(mdl, var.levels[v], off);
+      # ... and increase 'off' accordingly
+      #   (note: 'off' must be updated as a "global" variable!)
+      off <<- off + var.levels[v];
+      # finally return the actual lowest p-value
+      return(ret);
+    } );
+    
+    # Find the variable with the maximum p-value
+    idx <- which.max(p.vals);
+    
+    # ... and check its statistical significance
+    if ( p.vals[idx] >= alpha )
+    {
+      # if it is not statistically significant, exclude it
+      # from 'expl.vars'
+      expl.vars[idx] <- NULL;
+    }
+    else
+    {
+      # Otherwise quit the loop
+      break;  # out of while
+    }
+  }  # while
+  
+    
+  # Finally return the value requested by 'ret.expl.vars'
+  if ( TRUE==ret.expl.vars )
+  {
+    return( c(expl.vars, inc) );
+  }
+  else
+  {
+    formula <- .create.lm.formula(resp, c(expl.vars, inc));
+    return( lm(formula, data=dframe) );
+  }
+}

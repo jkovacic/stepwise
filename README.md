@@ -13,7 +13,7 @@ p-values et al.
 * forward selection, based on Bayesian Information Criterion (function `stepwise.fwd.bic`)
 * backwards elimination, based on Bayesian Information Criterion (function `stepwise.bck.bic`)
 * forward selection, based on significance of coefficients' p-values (function `stepwise.fwd.pval`)
-* backwards elimination, based on significance of coefficients' p-values (_not implemented yet_)
+* backwards elimination, based on significance of coefficients' p-values (function `stepwise.bck.pval`)
 
 ##Usage
 Just call the command `source('stepwise.R')` and then call any function

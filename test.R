@@ -93,12 +93,23 @@ mdl <- stepwise.bck.mallowsCp(dtframe, rsp, ret.expl.vars=FALSE);
 print(mdl);
 
 
-cat("= = =  Forward selection, p-value as criterion= = =\n\n");
+cat("= = =  Forward selection, p-value as criterion = = =\n\n");
 
 cat("\n= A list of \"significant\" variables, with \'drat\' and \'vs\' required: =\n");
-mdl <- stepwise.fwd.pval(dtframe, rsp, incl, alpha=0.05, ret.expl.vars=FALSE);
+mdl <- stepwise.fwd.pval(dtframe, rsp, incl, alpha=0.05, ret.expl.vars=TRUE);
 print(mdl);
 
 cat("= A fitted model with no required expl. variables: =\n");
 mdl <- stepwise.fwd.pval(dtframe, rsp, alpha=0.05, ret.expl.vars=FALSE);
+print(mdl);
+
+
+cat("= = = Backwards elimination, p-value as criterion = = =\n\n");
+
+cat("\n= A list of \"significant\" variables, with \'drat\' and \'vs\' required: =\n");
+mdl <- stepwise.bck.pval(dtframe, rsp, alpha=0.05, inc=incl, ret.expl.vars=TRUE);
+print(mdl);
+
+cat("= A fitted model with no required expl. variables: =\n");
+mdl <- stepwise.bck.pval(dtframe, rsp, alpha=0.05, ret.expl.vars=FALSE);
 print(mdl);
