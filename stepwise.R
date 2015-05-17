@@ -23,8 +23,7 @@ source('critfunc.R');
   # Args:
   #   d.frame: a data frame
   #   resp.var: name of the response variable. Must be a character and among d.frame's variables
-  #   alpha: significance level for p-values. Only applicable if 'adj.R'
-  #          is FALSE. Must be a numeric value between 0 and 1.
+  #   alpha: significance level for p-values.
   #   inc.vars: a list of predictors that must be included into a model. If not
   #             NULL, it must be a list of variable names as character values. All values
   #             must be valid d.frame's variables and none must be equal to 'res'.
@@ -887,6 +886,7 @@ stepwise.bck.pval <- function(dframe, resp, alpha=0.05, inc=NULL, ret.expl.vars=
   # - start with a full model
   # - exclude the least significant predictor and refit the model
   # - repeat the procedure until all the remaining predictors are significant
+  
   
   # sanity check
   .check.validity(d.frame=dframe, resp.var=resp, alpha=alpha, inc.vars=inc);
