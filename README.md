@@ -1,7 +1,7 @@
 ##About
 A simple R library for stepwise selection of the "best" linear model,
-depending on the selected criterion, such as adjusted R<sup>2</sup>,
-p-values et al.
+depending on the selected criterion, such as _adjusted R<sup>2</sup>:,
+_AIC_, _BIC_, _Mallows' Cp_ or _p-values_.
 
 ##Supported methods
 * forward selection, based on adjusted R<sup>2</sup> (function `stepwise.fwd.adjR2`)
