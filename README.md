@@ -1,6 +1,6 @@
 ##About
 A simple R library for stepwise selection of the "best" linear model,
-depending on the selected criterion, such as _adjusted R<sup>2</sup>:,
+depending on the selected criterion, such as _adjusted R<sup>2</sup>_,
 _AIC_, _BIC_, _Mallows' Cp_ or _p-values_.
 
 ##Supported methods
