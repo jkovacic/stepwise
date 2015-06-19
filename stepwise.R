@@ -139,6 +139,26 @@ source('critfunc.R');
 }
 
 
+.check.nr.observations <- function(d.frame, pred)
+{
+  # Checks that tthe number of predictors is not greater
+  # than the number of observations in 'd.frame'.
+  # This condition is necessary to check at backwards methods
+  #
+  # Args:
+  #   d.frame:
+  #   pred: predictors (explanatory variables) as a list of character values
+  #
+  # Returns:
+  #   nothing, a stop message is thrown if the condition above is not met
+
+  if ( length(pred) >= nrow(d.frame) )
+  {
+    stop("Not enough observations");
+  }
+}
+
+
 .create.lm.formula <- function(resp.var, vars)
 {
   # Accepts the response variable and a list of explanatory variables
@@ -415,6 +435,10 @@ source('critfunc.R');
   
   # And remove the response variable
   expl.vars <- expl.vars[ expl.vars != resp ];
+  
+  # Check if the total number of predictors does not exceed
+  # the number of all observations
+  .check.nr.observations(dframe, expl.vars);
   
   # additionally remove all 'inc' variables if given
   if ( !is.null(inc) )
@@ -899,6 +923,10 @@ stepwise.bck.pval <- function(dframe, resp, alpha=0.05, inc=NULL, ret.expl.vars=
   
   # And remove the response variable
   expl.vars <- expl.vars[ expl.vars != resp ];
+  
+  # Check if the total number of predictors does not exceed
+  # the number of all observations
+  .check.nr.observations(dframe, expl.vars);
   
   # Also remove any inc. variables
   if ( !is.null(inc) )
