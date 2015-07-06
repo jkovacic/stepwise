@@ -40,7 +40,7 @@
                   "adjR2" = .crit.adjR2(mdl), 
                   "mallowsCp" = .crit.mallowsCp(mdl, msef),
                   "aic" = .crit.aic(mdl),
-                  "bic" = .crit.bic(mdl) ) );
+                  "bic" = .crit.bic(mdl) ) )
 }
 
 
@@ -59,11 +59,11 @@
   
   if ( FALSE == is.null(full.mdl) )
   {
-    mdl <- full.mdl;
+    mdl <- full.mdl
   }
   else
   {
-    mdl <- lm( as.formula(paste0(resp, " ~ .")), data=dframe);
+    mdl <- lm( as.formula(paste0(resp, " ~ .")), data=dframe)
   }
 
   # The MSE_full with 'p' predictors and 'n' observations
@@ -80,7 +80,7 @@
   #                  n - p - 1
   #
 
-  return( sum( mdl$residuals^2 ) / mdl$df.residual );
+  return( sum( mdl$residuals^2 ) / mdl$df.residual )
 }
 
 
@@ -95,7 +95,7 @@
   # Returns:
   #   adjusted R^2 of 'mdl'
 
-  return( summary(mdl)$adj.r.squared );
+  return( summary(mdl)$adj.r.squared )
 }
 
 
@@ -124,11 +124,11 @@
   #         MSE_full
   #
   
-  sse <- sum( mdl$residuals^2 );
-  n <- nrow( mdl$model );
-  p <- ncol( mdl$model ) - 1;
+  sse <- sum( mdl$residuals^2 )
+  n <- nrow( mdl$model )
+  p <- ncol( mdl$model ) - 1
   
-  return( sse/msef - (n-2*p));
+  return( sse/msef - (n-2*p))
 }
 
 
@@ -150,11 +150,11 @@
   #                \  n   /
   #
   
-  sse <- sum( mdl$residuals^2 );
-  n <- nrow( mdl$model );
-  p <- ncol( mdl$model ) - 1;
+  sse <- sum( mdl$residuals^2 )
+  n <- nrow( mdl$model )
+  p <- ncol( mdl$model ) - 1
   
-  return( n*log(sse/n) + 2*p );
+  return( n*log(sse/n) + 2*p )
 }
 
 
@@ -177,9 +177,9 @@
   #                \  n   /
   #
   
-  sse <- sum( mdl$residuals^2 );
-  n <- nrow( mdl$model );
-  p <- ncol( mdl$model ) - 1;
+  sse <- sum( mdl$residuals^2 )
+  n <- nrow( mdl$model )
+  p <- ncol( mdl$model ) - 1
   
-  return( n*log(sse/n) + p*log(n) );
+  return( n*log(sse/n) + p*log(n) )
 }
