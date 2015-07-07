@@ -309,11 +309,8 @@ source('critfunc.R')
   expl.vars <- list()
   
   # If the selected criteria is Mallows' Cp, the MSE of the full model is needed
-  msef <- 0.0
-  if ( "mallowsCp" == critf )
-  {
-    msef <- .crit.msef(dframe, resp)
-  }
+  msef <- ifelse( "mallowsCp" == critf,
+                  .crit.msef(dframe, resp), 0.0 )
   
   # Only applicable if 'inc' is not empty
   if ( !is.null(inc) )
@@ -348,14 +345,8 @@ source('critfunc.R')
     
     # find the model with the best criterion and check if this
     # value has improved w.r.t. the current model
-    if ( TRUE==minimize )
-    {
-      idx <- which.min(cs)
-    }
-    else
-    {
-      idx <- which.max(cs)
-    }
+    idx <- ifelse( TRUE==minimize,
+                   which.min(cs), which.max(cs) )
     
     crit.best <- cs[idx]
     if ( (TRUE==minimize && crit.best<crit) ||
@@ -450,11 +441,8 @@ source('critfunc.R')
   mdl <- lm( .create.lm.formula( resp.var=resp, vars="."), data=dframe)
   
   # If the selected criteria is Mallows' Cp, MSE of the full model will be needed:
-  msef <- 0.0
-  if ( "mallowsCp"==critf )
-  {
-    msef <- .crit.msef(full.mdl=mdl)
-  }
+  msef <- ifelse( "mallowsCp"==critf,
+                  .crit.msef(full.mdl=mdl), 0.0 )
   
   crit <- .crit.criterion( critf, mdl, msef )
   
@@ -472,14 +460,9 @@ source('critfunc.R')
     
     # find the model with the best value of criterion and check if this
     # value has improved w.r.t. the current model
-    if ( TRUE == minimize )
-    {
-      idx <- which.min(cs)
-    }
-    else
-    {
-      idx <- which.max(cs)
-    }
+    idx <- ifelse( TRUE==minimize,
+                   which.min(cs), which.max(cs) )
+
     crit.best <- cs[idx]
     if ( (TRUE==minimize && crit.best<crit) ||
          (FALSE==minimize && crit.best>crit) )
