@@ -337,7 +337,7 @@ source('critfunc.R')
   while ( length(df.vars) > 0 )
   {
     # a vector of all models' criteria
-    cs <- sapply( df.vars, function(v) 
+    cs <- vapply( df.vars, FUN.VALUE=0.0, FUN=function(v) 
     {
       mdl <- lm(.create.lm.formula(resp, c(expl.vars, v)), data=dframe )
       return( .crit.criterion( critf, mdl, msef ) )
@@ -450,7 +450,7 @@ source('critfunc.R')
   # due to no improvement of criterion
   while ( length(expl.vars) > 0 )
   {
-    cs <- sapply(expl.vars, function(v)
+    cs <- vapply(expl.vars, FUN.VALUE=0.0, FUN=function(v)
     {
       # A temporary list of predictors w/o 'v':
       pred <- expl.vars[ expl.vars != v ]
@@ -820,7 +820,7 @@ stepwise.fwd.pval <- function(dframe, resp, alpha=0.05, inc=NULL, ret.expl.vars=
   while ( length(df.vars) > 0 )
   {
     # a vector of coefficients' p-values
-    p.vals <- sapply(df.vars, function(v)
+    p.vals <- vapply(df.vars, FUN.VALUE=0.0, FUN=function(v)
     {
       # The function '.pval.getmin' requires that the variable of interest ('v')
       # is the first in the list of variables to fit a model
@@ -928,7 +928,7 @@ stepwise.bck.pval <- function(dframe, resp, alpha=0.05, inc=NULL, ret.expl.vars=
     off <- 1L
     
     # a vector of coefficients' p-values
-    p.vals <- sapply(expl.vars, function(v)
+    p.vals <- vapply(expl.vars, FUN.VALUE=0.0, FUN=function(v)
     {
       # in case of a factor variable get the lowest applicable p-value
       ret <- .pval.getmin(mdl, var.levels[v], off)
