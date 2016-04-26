@@ -114,7 +114,7 @@
   #   msef: mean squared error of the full model
   #
   # Returns:
-  #   AIC of 'mdl'
+  #   Mallows' Cp of 'mdl'
   
   
   # Mallows' Cp is evaluated as:

@@ -242,7 +242,7 @@ source('critfunc.R')
   # Returns:
   #   minimum p-value of the variable's coefficients
   
-  # coefficients' p-values are stored in the 4th column of mdls$coefficients
+  # coefficients' p-values are stored in the 4th column of smdl$coefficients
   PVAL.COL <- 4L
   
   # Starting index of the desired variable's coefficient
@@ -313,7 +313,7 @@ source('critfunc.R')
                   .crit.msef(dframe, resp), 0.0 )
   
   # Only applicable if 'inc' is not empty
-  if ( !is.null(inc) )
+  if ( FALSE == is.null(inc) )
   {
     # Append required variables to 'expl.vars'
     expl.vars <- c(expl.vars, inc)
@@ -432,7 +432,7 @@ source('critfunc.R')
   .check.nr.observations(dframe, expl.vars)
   
   # additionally remove all 'inc' variables if given
-  if ( !is.null(inc) )
+  if ( FALSE == is.null(inc) )
   {
     expl.vars <- expl.vars[ !(expl.vars %in% inc) ]
   }
@@ -806,7 +806,7 @@ stepwise.fwd.pval <- function(dframe, resp, alpha=0.05, inc=NULL, ret.expl.vars=
   df.vars <- df.vars[ df.vars != resp ]
   
   # Also remove any inc. variables
-  if ( !is.null(inc) )
+  if ( FALSE == is.null(inc) )
   {
     df.vars <- df.vars[ !(df.vars %in% inc) ]
   }
@@ -912,7 +912,7 @@ stepwise.bck.pval <- function(dframe, resp, alpha=0.05, inc=NULL, ret.expl.vars=
   .check.nr.observations(dframe, expl.vars)
   
   # Also remove any inc. variables
-  if ( !is.null(inc) )
+  if ( FALSE == is.null(inc) )
   {
     expl.vars <- expl.vars[ !(expl.vars %in% inc) ]
   }
