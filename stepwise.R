@@ -202,11 +202,8 @@ source('critfunc.R')
   #
   # Returns:
   #   a named integer vector with counts for each d.frame's variable
-  
-  # Start with an empty vector of integers
-  r <- integer()
-  
-  for ( var in names(d.frame) )
+
+  r <- vapply( names(d.frame), FUN.VALUE=0L, USE.NAMES=TRUE, FUN=function(var)
   {
     # default value for numeric variables
     val <- 1L
@@ -218,12 +215,8 @@ source('critfunc.R')
       val <- length( levels(factor(d.frame[, var])) ) - 1L
     }
     
-    # Append it to 'r'
-    r <- c(r, val)
-    
-    # And finally give a name to the element
-    names(r)[length(r)] <- var
-  }
+    return(val)
+  } )
   
   return(r)
 }
