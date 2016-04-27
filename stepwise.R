@@ -230,7 +230,7 @@ source('critfunc.R')
   # Args:
   #   smdl: summarized linear model (as returned by summary(lm(..)))
   #   len: number of coefficients per variable of interest
-  #   offset: position of the first coeffient of interest (intercept excluded!)
+  #   offset: position of the first coefficient of interest (intercept excluded!)
   #
   # Returns:
   #   minimum p-value of the variable's coefficients
@@ -256,10 +256,10 @@ source('critfunc.R')
   # of predictors that optimizes the selected criterion.
   #
   # The following criteria are currently supported:
-  # - adjusted R^2 (crit="adjR2")
-  # - Mallows' Cp (crit="mallowsCp")
-  # - Aikake's Information Criterion (crit="aic")
-  # - Bayesian Information Criterion (crit="bic")
+  # - adjusted R^2 (critf="adjR2")
+  # - Mallows' Cp (critf="mallowsCp")
+  # - Aikake's Information Criterion (critf="aic")
+  # - Bayesian Information Criterion (critf="bic")
   #
   # Args:
   #   dframe: data frame
@@ -269,7 +269,7 @@ source('critfunc.R')
   #   ret.expl.vars: if TRUE, the function will return a list of selected
   #                  exlanatory variables, otherwise a model including
   #                  the selected variables
-  #   crit: criteria function (see above for more details)
+  #   critf: criteria function (see above for more details)
   #   minimize: a logical value indicating whether the selected criterion
   #             should be minimized (TRUE) or maximized (FALSE)
   #
@@ -381,10 +381,10 @@ source('critfunc.R')
   # of predictors that optimizes the selected criterion.
   #
   # The following criteria are currently supported:
-  # - adjusted R^2 (crit="adjR2")
-  # - Mallows' Cp (crit="mallowsCp")
-  # - Aikake's Information Criterion (crit="aic")
-  # - Bayesian Information Criterion (crit="bic")
+  # - adjusted R^2 (critf="adjR2")
+  # - Mallows' Cp (critf="mallowsCp")
+  # - Aikake's Information Criterion (critf="aic")
+  # - Bayesian Information Criterion (critf="bic")
   #
   # Args:
   #   dframe: data frame
@@ -394,7 +394,7 @@ source('critfunc.R')
   #   ret.expl.vars: if TRUE, the function will return a list of selected
   #                  exlanatory variables, otherwise a model including
   #                  the selected variables
-  #   crit: criteria function (see above for more details)
+  #   critf: criteria function (see above for more details)
   #   minimize: a logical value indicating whether the selected criterion
   #             should be minimized (TRUE) or maximized (FALSE)
   #
