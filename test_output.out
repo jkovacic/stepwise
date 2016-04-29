@@ -1,0 +1,194 @@
+= = = Forward selection, adjusted R^2 as criterion = = =
+
+= A list of variables that maximize the criterion, with 'drat' and 'vs' required: =
+
+[[1]]
+[1] "drat"
+
+[[2]]
+[1] "vs"
+
+[[3]]
+[1] "wt"
+
+[[4]]
+[1] "hp"
+
+[[5]]
+[1] "am"
+
+[[6]]
+[1] "qsec"
+
+[[7]]
+[1] "disp"
+
+= A fitted model with no required expl. variables: =
+
+Call:
+lm(formula = outmdl, data = dframe)
+
+Coefficients:
+(Intercept)           wt          cyl           hp           am         qsec  
+   20.05170     -3.99773     -0.50207     -0.01956      2.94075      0.81018  
+       disp  
+    0.01396  
+
+
+= = = Backwards elimination, adjusted R^2 as criterion = = =
+
+= A list of variables that maximize the criterion, with 'drat' and 'vs' required: =
+
+[[1]]
+[1] "disp"
+
+[[2]]
+[1] "hp"
+
+[[3]]
+[1] "wt"
+
+[[4]]
+[1] "qsec"
+
+[[5]]
+[1] "am"
+
+[[6]]
+[1] "drat"
+
+[[7]]
+[1] "vs"
+
+= A fitted model with no required expl. variables: =
+
+Call:
+lm(formula = outmdl, data = dframe)
+
+Coefficients:
+(Intercept)         disp           hp           wt         qsec           am  
+   14.36190      0.01124     -0.02117     -4.08433      1.00690      3.47045  
+
+
+= = = Forward selection, AIC as criterion = = =
+
+= A fitted model with no required expl. variables: =
+
+Call:
+lm(formula = outmdl, data = dframe)
+
+Coefficients:
+(Intercept)           wt          cyl           hp  
+   38.75179     -3.16697     -0.94162     -0.01804  
+
+
+= = = Backwards elimination, AIC as criterion = = =
+
+= A fitted model with no required expl. variables: =
+
+Call:
+lm(formula = outmdl, data = dframe)
+
+Coefficients:
+(Intercept)           wt         qsec           am  
+      9.618       -3.917        1.226        2.936  
+
+
+= = = Forward selection, BIC as criterion = = =
+
+= A fitted model with no required expl. variables: =
+
+Call:
+lm(formula = outmdl, data = dframe)
+
+Coefficients:
+(Intercept)           wt          cyl  
+     39.686       -3.191       -1.508  
+
+
+= = = Backwards elimination, BIC as criterion = = =
+
+= A fitted model with no required expl. variables: =
+
+Call:
+lm(formula = outmdl, data = dframe)
+
+Coefficients:
+(Intercept)           wt         qsec           am  
+      9.618       -3.917        1.226        2.936  
+
+
+= = = Forward selection, Mallows' Cp as criterion = = =
+
+= A fitted model with no required expl. variables: =
+
+Call:
+lm(formula = outmdl, data = dframe)
+
+Coefficients:
+(Intercept)           wt          cyl           hp  
+   38.75179     -3.16697     -0.94162     -0.01804  
+
+
+= = = Backwards elimination, Mallows' Cp as criterion = = =
+
+= A fitted model with no required expl. variables: =
+
+Call:
+lm(formula = outmdl, data = dframe)
+
+Coefficients:
+(Intercept)           wt         qsec           am  
+      9.618       -3.917        1.226        2.936  
+
+
+= = =  Forward selection, p-values as criteria = = =
+
+= A list of significant variables, with 'drat' and 'vs' required: =
+
+[[1]]
+[1] "drat"
+
+[[2]]
+[1] "vs"
+
+[[3]]
+[1] "wt"
+
+[[4]]
+[1] "hp"
+
+= A fitted model with no required expl. variables: =
+
+Call:
+lm(formula = outmdl, data = dframe)
+
+Coefficients:
+(Intercept)           wt          cyl  
+     39.686       -3.191       -1.508  
+
+
+= = = Backwards elimination, p-values as criteria = = =
+
+= A list of significant variables, with 'drat' and 'vs' required: =
+
+[[1]]
+[1] "hp"
+
+[[2]]
+[1] "wt"
+
+[[3]]
+[1] "drat"
+
+[[4]]
+[1] "vs"
+
+= A fitted model with no required expl. variables: =
+
+Call:
+lm(formula = outmdl, data = dframe)
+
+Coefficients:
+(Intercept)           wt         qsec           am  
+      9.618       -3.917        1.226        2.936  

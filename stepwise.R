@@ -368,8 +368,8 @@ source('critfunc.R')
   }
   else
   {
-    formula <- .create.lm.formula(resp, expl.vars)
-    return( lm(formula, data=dframe) )
+    outmdl <- .create.lm.formula(resp, expl.vars)
+    return( lm(outmdl, data=dframe) )
   }
 }
 
@@ -480,8 +480,8 @@ source('critfunc.R')
   }
   else
   {
-    formula <- .create.lm.formula(resp, c(expl.vars, inc))
-    return( lm(formula, data=dframe) )
+    outmdl <- .create.lm.formula(resp, c(expl.vars, inc))
+    return( lm(outmdl, data=dframe) )
   }
 }
 
@@ -829,7 +829,7 @@ stepwise.fwd.pval <- function(dframe, resp, alpha=0.05, inc=NULL, ret.expl.vars=
     # And make sure it is statistically significant
     if ( p.vals[idx] < alpha )
     {
-      # If it is signidficant, append it to 'expl.vars'
+      # If it is significant, append it to 'expl.vars'
       expl.vars <- c(expl.vars, df.vars[idx])
       
       # and remove it from 'df.vars'
@@ -849,8 +849,8 @@ stepwise.fwd.pval <- function(dframe, resp, alpha=0.05, inc=NULL, ret.expl.vars=
   }
   else
   {
-    formula <- .create.lm.formula(resp, expl.vars)
-    return( lm(formula, data=dframe) )
+    outmdl <- .create.lm.formula(resp, expl.vars)
+    return( lm(outmdl, data=dframe) )
   }
 }
 
@@ -957,7 +957,7 @@ stepwise.bck.pval <- function(dframe, resp, alpha=0.05, inc=NULL, ret.expl.vars=
   }
   else
   {
-    formula <- .create.lm.formula(resp, c(expl.vars, inc))
-    return( lm(formula, data=dframe) )
+    outmdl <- .create.lm.formula(resp, c(expl.vars, inc))
+    return( lm(outmdl, data=dframe) )
   }
 }
