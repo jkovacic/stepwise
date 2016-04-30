@@ -192,3 +192,4 @@ lm(formula = outmdl, data = dframe)
 Coefficients:
 (Intercept)           wt         qsec           am  
       9.618       -3.917        1.226        2.936  
+
