@@ -160,7 +160,7 @@
 
 .crit.bic <- function(mdl)
 {
-  # Bayesians Information Criterion (BIC) a.k.a.
+  # Bayesian Information Criterion (BIC) a.k.a.
   # Schwarz Bayesian Criterion (SBC) of the given model
   #
   # Args:
