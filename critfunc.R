@@ -16,32 +16,17 @@
 #
 # Implementation of criteria functions for selection of models
 #
-
-
-.crit.criterion <- function(critf, mdl, msef)
-{
-  # Evaluates the selected criterion function.
-  #
-  # The following criteria are currently supported:
-  # - adjusted R^2 (crit="adjR2")
-  # - Mallows' Cp (crit="mallowsCp")
-  # - Aikake's Information Criterion (crit="aic")
-  # - Bayesian Information Criterion (crit="bic")
-  #
-  # Args:
-  #   critf: name of the criterion function
-  #   mdl: model as returned by the function 'lm'
-  #   msef: mean squared error of the full model (only applicable for the Mallows' Cp)
-  #
-  # Returns:
-  #   value of the selected criterion for the given model
-  
-  return( switch( critf, 
-                  "adjR2" = .crit.adjR2(mdl), 
-                  "mallowsCp" = .crit.mallowsCp(mdl, msef),
-                  "aic" = .crit.aic(mdl),
-                  "bic" = .crit.bic(mdl) ) )
-}
+# All functions implement the following "interface"
+#
+#   ICrit(mdl, msef)
+#
+#   Args:
+#     mdl  - model as returned by the function 'lm'
+#     msef - the second argument where applicable, ignored by most functions
+#
+#   Returns:
+#     value of the criterion function of the given model 'mdl'
+#
 
 
 
@@ -85,12 +70,13 @@
 
 
 
-.crit.adjR2 <- function(mdl)
+.crit.adjR2 <- function(mdl, msef)
 {
   # Adjusted R^2 of the given model
   #
   # Args:
-  #   mdl - model as returned by the function 'lm'
+  #   mdl  - model as returned by the function 'lm'
+  #   msef - ignored
   #
   # Returns:
   #   adjusted R^2 of 'mdl'
@@ -110,8 +96,8 @@
   # Mallows' Cp of the given model
   #
   # Args:
-  #   mdl - model as returned by the function 'lm'
-  #   msef: mean squared error of the full model
+  #   mdl  - model as returned by the function 'lm'
+  #   msef - mean squared error of the full model
   #
   # Returns:
   #   Mallows' Cp of 'mdl'
@@ -132,12 +118,13 @@
 }
 
 
-.crit.aic <- function(mdl)
+.crit.aic <- function(mdl, msef)
 {
   # Aikake's Information Criterion (AIC) of the given model
   #
   # Args:
-  #   mdl - model as returned by the function 'lm'
+  #   mdl  - model as returned by the function 'lm'
+  #   msef - ignored
   #
   # Returns:
   #   AIC of 'mdl'
@@ -158,13 +145,14 @@
 }
 
 
-.crit.bic <- function(mdl)
+.crit.bic <- function(mdl, msef)
 {
   # Bayesian Information Criterion (BIC) a.k.a.
   # Schwarz Bayesian Criterion (SBC) of the given model
   #
   # Args:
-  #   mdl - model as returned by the function 'lm'
+  #   mdl  - model as returned by the function 'lm'
+  #   msef - ignored
   #
   # Returns:
   #   BIC of 'mdl'

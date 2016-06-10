@@ -255,12 +255,6 @@ source('critfunc.R')
   # Performs the stepwise regression algorithm, based on forward selection 
   # of predictors that optimizes the selected criterion.
   #
-  # The following criteria are currently supported:
-  # - adjusted R^2 (critf="adjR2")
-  # - Mallows' Cp (critf="mallowsCp")
-  # - Aikake's Information Criterion (critf="aic")
-  # - Bayesian Information Criterion (critf="bic")
-  #
   # Args:
   #   dframe: data frame
   #   resp: name of the response variable as a character value
@@ -269,7 +263,7 @@ source('critfunc.R')
   #   ret.expl.vars: if TRUE, the function will return a list of selected
   #                  exlanatory variables, otherwise a model including
   #                  the selected variables
-  #   critf: criteria function (see above for more details)
+  #   critf: reference to the criteria function
   #   minimize: a logical value indicating whether the selected criterion
   #             should be minimized (TRUE) or maximized (FALSE)
   #
@@ -302,7 +296,7 @@ source('critfunc.R')
   expl.vars <- list()
   
   # If the selected criteria is Mallows' Cp, the MSE of the full model is needed
-  msef <- ifelse( "mallowsCp" == critf,
+  msef <- ifelse( TRUE==identical(.crit.mallowsCp, critf),
                   .crit.msef(dframe, resp), 0.0 )
   
   # Only applicable if 'inc' is not empty
@@ -323,7 +317,7 @@ source('critfunc.R')
     mdl <- lm( .create.lm.formula(resp.var=resp, vars="1"), data=dframe )
   }
   
-  crit <- .crit.criterion( critf, mdl, msef )
+  crit <- critf( mdl, msef )
   
   # Iterate the loop until 'df.vars' is empty or it is interrupted beforehand
   # due to no improvement of the criterion
@@ -333,7 +327,7 @@ source('critfunc.R')
     cs <- vapply( df.vars, FUN.VALUE=0.0, FUN=function(v) 
     {
       mdl <- lm(.create.lm.formula(resp, c(expl.vars, v)), data=dframe )
-      return( .crit.criterion( critf, mdl, msef ) )
+      return( critf( mdl, msef ) )
     } )
     
     # find the model with the best criterion and check if this
@@ -380,12 +374,6 @@ source('critfunc.R')
   # Performs the stepwise regression algorithm, based on backwards elimination 
   # of predictors that optimizes the selected criterion.
   #
-  # The following criteria are currently supported:
-  # - adjusted R^2 (critf="adjR2")
-  # - Mallows' Cp (critf="mallowsCp")
-  # - Aikake's Information Criterion (critf="aic")
-  # - Bayesian Information Criterion (critf="bic")
-  #
   # Args:
   #   dframe: data frame
   #   resp: name of the response variable as a character value
@@ -394,7 +382,7 @@ source('critfunc.R')
   #   ret.expl.vars: if TRUE, the function will return a list of selected
   #                  exlanatory variables, otherwise a model including
   #                  the selected variables
-  #   critf: criteria function (see above for more details)
+  #   critf: reference to the criteria function
   #   minimize: a logical value indicating whether the selected criterion
   #             should be minimized (TRUE) or maximized (FALSE)
   #
@@ -434,10 +422,10 @@ source('critfunc.R')
   mdl <- lm( .create.lm.formula( resp.var=resp, vars="."), data=dframe)
   
   # If the selected criteria is Mallows' Cp, MSE of the full model will be needed:
-  msef <- ifelse( "mallowsCp"==critf,
+  msef <- ifelse( TRUE==identical(.crit.mallowsCp, critf),
                   .crit.msef(full.mdl=mdl), 0.0 )
   
-  crit <- .crit.criterion( critf, mdl, msef )
+  crit <- critf( mdl, msef )
   
   # Iterate the loop until 'df.vars' is empty or it is interrupted beforehand
   # due to no improvement of criterion
@@ -448,7 +436,7 @@ source('critfunc.R')
       # A temporary list of predictors w/o 'v':
       pred <- expl.vars[ expl.vars != v ]
       mdl <- lm( .create.lm.formula(resp, c(pred, inc)), data=dframe )
-      return( .crit.criterion( critf, mdl, msef ) )
+      return( critf( mdl, msef ) )
     } )
     
     # find the model with the best value of criterion and check if this
@@ -514,7 +502,7 @@ stepwise.fwd.adjR2 <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
         resp = resp, 
         inc = inc, 
         ret.expl.vars = ret.expl.vars, 
-        critf = "adjR2",
+        critf = .crit.adjR2,
         minimize = FALSE ) )
 }
 
@@ -547,7 +535,7 @@ stepwise.bck.adjR2 <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
         resp = resp, 
         inc = inc, 
         ret.expl.vars = ret.expl.vars, 
-        critf = "adjR2",
+        critf = .crit.adjR2,
         minimize = FALSE ) )
 }
 
@@ -580,7 +568,7 @@ stepwise.fwd.mallowsCp <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
     resp = resp, 
     inc = inc, 
     ret.expl.vars = ret.expl.vars, 
-    critf = "mallowsCp",
+    critf = .crit.mallowsCp,
     minimize = TRUE ) )
 }
 
@@ -613,7 +601,7 @@ stepwise.bck.mallowsCp <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
     resp = resp, 
     inc = inc, 
     ret.expl.vars = ret.expl.vars, 
-    critf = "mallowsCp",
+    critf = .crit.mallowsCp,
     minimize = TRUE ) )
 }
 
@@ -646,7 +634,7 @@ stepwise.fwd.aic <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
     resp = resp, 
     inc = inc, 
     ret.expl.vars = ret.expl.vars, 
-    critf = "aic",
+    critf = .crit.aic,
     minimize = TRUE ) )
 }
 
@@ -679,7 +667,7 @@ stepwise.bck.aic <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
     resp = resp, 
     inc = inc, 
     ret.expl.vars = ret.expl.vars, 
-    critf = "aic",
+    critf = .crit.aic,
     minimize = TRUE ) )
 }
 
@@ -712,7 +700,7 @@ stepwise.fwd.bic <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
     resp = resp, 
     inc = inc, 
     ret.expl.vars = ret.expl.vars, 
-    critf = "bic",
+    critf = .crit.bic,
     minimize = TRUE ) )
 }
 
@@ -745,7 +733,7 @@ stepwise.bck.bic <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
     resp = resp, 
     inc = inc, 
     ret.expl.vars = ret.expl.vars, 
-    critf = "bic",
+    critf = .crit.bic,
     minimize = TRUE ) )
 }
 
