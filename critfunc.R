@@ -85,7 +85,7 @@
 
 
 
-.crit.adjR2 <- function(mdl, msef)
+.crit.adjR2 <- function(mdl)
 {
   # Adjusted R^2 of the given model
   #
@@ -145,7 +145,7 @@
 
 
 
-.crit.aic <- function(mdl, msef)
+.crit.aic <- function(mdl)
 {
   # Aikake's Information Criterion (AIC) of the given model
   #
@@ -171,7 +171,7 @@
 }
 
 
-.crit.bic <- function(mdl, msef)
+.crit.bic <- function(mdl)
 {
   # Bayesian Information Criterion (BIC) a.k.a.
   # Schwarz Bayesian Criterion (SBC) of the given model
