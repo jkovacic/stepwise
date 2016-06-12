@@ -141,12 +141,12 @@ source('critfunc.R')
 
 .check.nr.observations <- function(d.frame, pred)
 {
-  # Checks that tthe number of predictors is not greater
+  # Checks that the number of predictors is not greater
   # than the number of observations in 'd.frame'.
   # This condition is necessary to check at backwards methods
   #
   # Args:
-  #   d.frame:
+  #   d.frame: a data frame
   #   pred: predictors (explanatory variables) as a list of character values
   #
   # Returns:
@@ -198,7 +198,7 @@ source('critfunc.R')
   # the number of levels, decreased by 1.
   #
   # Args:
-  #   d.frame - the data frame with variables of interest
+  #   d.frame: the data frame with variables of interest
   #
   # Returns:
   #   a named integer vector with counts for each d.frame's variable
@@ -295,9 +295,8 @@ source('critfunc.R')
   # List of selected explanatory variables - initially empty
   expl.vars <- list()
   
-  # If the selected criteria is Mallows' Cp, the MSE of the full model is needed
-  msef <- ifelse( TRUE==identical(.crit.mallowsCp, critf),
-                  .crit.msef(dframe, resp), 0.0 )
+  # Obtain a reference to the criteria function, referred by this algorithm:
+  cf <- .crit.func.factory(critf, dframe, resp)
   
   # Only applicable if 'inc' is not empty
   if ( FALSE == is.null(inc) )
@@ -317,7 +316,7 @@ source('critfunc.R')
     mdl <- lm( .create.lm.formula(resp.var=resp, vars="1"), data=dframe )
   }
   
-  crit <- critf( mdl, msef )
+  crit <- cf(mdl)
   
   # Iterate the loop until 'df.vars' is empty or it is interrupted beforehand
   # due to no improvement of the criterion
@@ -327,7 +326,7 @@ source('critfunc.R')
     cs <- vapply( df.vars, FUN.VALUE=0.0, FUN=function(v) 
     {
       mdl <- lm(.create.lm.formula(resp, c(expl.vars, v)), data=dframe )
-      return( critf( mdl, msef ) )
+      return( cf(mdl) )
     } )
     
     # find the model with the best criterion and check if this
@@ -418,14 +417,14 @@ source('critfunc.R')
     expl.vars <- expl.vars[ !(expl.vars %in% inc) ]
   }
   
-  # Current value of the criterion, initially set to the value of the full model
+  # Start with a full model:
   mdl <- lm( .create.lm.formula( resp.var=resp, vars="."), data=dframe)
   
-  # If the selected criteria is Mallows' Cp, MSE of the full model will be needed:
-  msef <- ifelse( TRUE==identical(.crit.mallowsCp, critf),
-                  .crit.msef(full.mdl=mdl), 0.0 )
+  # Obtain a reference to the criteria function, referred by this algorithm:
+  cf <- .crit.func.factory(critf, mdl)
   
-  crit <- critf( mdl, msef )
+  # Current value of the criterion, initially set to the value of the full model
+  crit <- cf(mdl)
   
   # Iterate the loop until 'df.vars' is empty or it is interrupted beforehand
   # due to no improvement of criterion
@@ -436,7 +435,7 @@ source('critfunc.R')
       # A temporary list of predictors w/o 'v':
       pred <- expl.vars[ expl.vars != v ]
       mdl <- lm( .create.lm.formula(resp, c(pred, inc)), data=dframe )
-      return( critf( mdl, msef ) )
+      return( cf(mdl) )
     } )
     
     # find the model with the best value of criterion and check if this

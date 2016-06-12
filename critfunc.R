@@ -13,42 +13,26 @@
 # limitations under the License.
 
 
-#
-# Implementation of criteria functions for selection of models
-#
-# All functions implement the following "interface"
-#
-#   ICrit(mdl, msef)
-#
-#   Args:
-#     mdl  - model as returned by the function 'lm'
-#     msef - the second argument where applicable, ignored by most functions
-#
-#   Returns:
-#     value of the criterion function of the given model 'mdl'
-#
 
-
-
-.crit.msef <- function(dframe=NULL, resp=NULL, full.mdl=NULL)
+.crit.msef <- function(dframe_mdl, resp=NULL)
 {
   # Mean squared error of the full model of the given data frame
   #
   # Args:
-  #   dframe: desired data frame
-  #   resp: name of the response variable
-  #   full.mdl: fitted full model (if not NULL, 'dframe' and 'resp' will be ignored)
+  #   dframe_mdl: either desired data frame or full linear model
+  #   resp: name of the response variable (ignored if 'dframe_mdl' is a model)
   #
   # Returns:
-  #   mean squared error of the full model 'full.mdl' (if not NULL) or 'dframe$resp ~ .'
+  #   mean squared error of the full model
   
-  if ( FALSE == is.null(full.mdl) )
+  if ( FALSE == is.data.frame(dframe_mdl) )
   {
-    mdl <- full.mdl
+    # Nothing to do if 'dframe_mdl' is already a linear model
+    mdl <- dframe_mdl
   }
   else
   {
-    mdl <- lm( as.formula(paste0(resp, " ~ .")), data=dframe)
+    mdl <- lm( as.formula(paste0(resp, " ~ .")), data=dframe_mdl)
   }
 
   # The MSE_full with 'p' predictors and 'n' observations
@@ -70,13 +54,43 @@
 
 
 
+.crit.func.factory <- function(critf, dframe_mdl, resp=NULL)
+{
+  # a "factory" that returns a properly initialized function (where applicable)
+  # that evaluates the criterion of the model. The returned function
+  # accepts a single argument and is further used by stepwise algorithms.
+  #
+  # Args:
+  #   critf: reference to the desired criteria function
+  #   dframe_mdl: data frame or a full model
+  #   resp: name of the response variable (ignored if 'dframe_mdl' is a model)
+  #  
+  # Returns:
+  #   criteria function that accepts a single argument
+  
+  
+  # "Initialization" of a closure is only necessary when the requested 
+  # criterion is Mallows' Cp. In all other cases, 'critf' is returned.
+  if ( TRUE==identical(.crit.mallowsCp, critf ) )
+  {
+    retf <- .crit.mallowsCp(.crit.msef(dframe_mdl, resp))
+  }
+  else
+  {
+    retf <- critf
+  }
+  
+  return( retf )
+}
+
+
+
 .crit.adjR2 <- function(mdl, msef)
 {
   # Adjusted R^2 of the given model
   #
   # Args:
-  #   mdl  - model as returned by the function 'lm'
-  #   msef - ignored
+  #   mdl: model as returned by the function 'lm'
   #
   # Returns:
   #   adjusted R^2 of 'mdl'
@@ -91,31 +105,44 @@
 # http://www.stat.purdue.edu/~ghobbs/STAT_512/Lecture_Notes/Regression/Topic_15.pdf
 #
 
-.crit.mallowsCp <- function(mdl, msef)
+.crit.mallowsCp <- function(msef)
 {
-  # Mallows' Cp of the given model
+  # A closure that "initializes" the function that evaluates
+  # model's Mallows' Cp
   #
   # Args:
-  #   mdl  - model as returned by the function 'lm'
-  #   msef - mean squared error of the full model
+  #   msef: mean squared error of the full model
   #
   # Returns:
-  #   Mallows' Cp of 'mdl'
+  #   properly initialized function that evaluates model's Mallows' Cp
   
-  
-  # Mallows' Cp is evaluated as:
-  #
-  #           SSE
-  #   Cp = ---------- - (n - 2*p)
-  #         MSE_full
-  #
-  
-  sse <- sum( mdl$residuals^2 )
-  n <- nrow( mdl$model )
-  p <- ncol( mdl$model ) - 1
-  
-  return( sse/msef - (n-2*p))
+  return(
+    function(mdl)
+    {
+      # Mallows' Cp of the given model
+      #
+      # Args:
+      #   mdl: model as returned by the function 'lm'
+      #
+      # Returns:
+      #   Mallows' Cp of 'mdl'
+      
+      
+      # Mallows' Cp is evaluated as:
+      #
+      #           SSE
+      #   Cp = ---------- - (n - 2*p)
+      #         MSE_full
+      #
+      
+      sse <- sum( mdl$residuals^2 )
+      n <- nrow( mdl$model )
+      p <- ncol( mdl$model ) - 1
+      
+      return( sse/msef - (n-2*p))
+    } )
 }
+
 
 
 .crit.aic <- function(mdl, msef)
@@ -123,8 +150,7 @@
   # Aikake's Information Criterion (AIC) of the given model
   #
   # Args:
-  #   mdl  - model as returned by the function 'lm'
-  #   msef - ignored
+  #   mdl: model as returned by the function 'lm'
   #
   # Returns:
   #   AIC of 'mdl'
@@ -151,8 +177,7 @@
   # Schwarz Bayesian Criterion (SBC) of the given model
   #
   # Args:
-  #   mdl  - model as returned by the function 'lm'
-  #   msef - ignored
+  #   mdl: model as returned by the function 'lm'
   #
   # Returns:
   #   BIC of 'mdl'
