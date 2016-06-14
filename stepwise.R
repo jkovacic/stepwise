@@ -769,7 +769,7 @@ stepwise.fwd.pval <- function(dframe, resp, alpha=0.05, inc=NULL, ret.expl.vars=
   #   add other expl. variables one by one
   # - pick the most significant expl. variable (with the lowest p-value)
   # - add remaining expl. vraibles one by one and pick the most significant one
-  # - repeat the procedure until of the remaining variables do not have
+  # - repeat the procedure until none of the remaining variables has
   #   a significant p-value
   
   
@@ -805,7 +805,7 @@ stepwise.fwd.pval <- function(dframe, resp, alpha=0.05, inc=NULL, ret.expl.vars=
       # The function '.pval.getmin' requires that the variable of interest ('v')
       # is the first in the list of variables to fit a model
       mdl <- summary(
-          lm ( .create.lm.formula( resp, c(v, expl.vars) ), data=dframe) )
+          lm( .create.lm.formula( resp, c(v, expl.vars) ), data=dframe) )
       
       return( .pval.getmin(mdl, var.levels[v]) )
     } )
