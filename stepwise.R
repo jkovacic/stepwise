@@ -490,7 +490,7 @@ stepwise.fwd.adjR2 <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
   #   inc: an optional list of names of explanatory variables that 
   #        must be included into the final model
   #   ret.expl.vars: if TRUE, the function will return a list of selected
-  #                  exlanatory variables, otherwise a model including
+  #                  explanatory variables, otherwise a model including
   #                  the selected variables
   #
   # Returns:
@@ -523,7 +523,7 @@ stepwise.bck.adjR2 <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
   #   inc: an optional list of names of explanatory variables that 
   #        must be included into the final model
   #   ret.expl.vars: if TRUE, the function will return a list of selected
-  #                  exlanatory variables, otherwise a model including
+  #                  explanatory variables, otherwise a model including
   #                  the selected variables
   #
   # Returns:
@@ -556,7 +556,7 @@ stepwise.fwd.mallowsCp <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
   #   inc: an optional list of names of explanatory variables that 
   #        must be included into the final model
   #   ret.expl.vars: if TRUE, the function will return a list of selected
-  #                  exlanatory variables, otherwise a model including
+  #                  explanatory variables, otherwise a model including
   #                  the selected variables
   #
   # Returns:
@@ -589,7 +589,7 @@ stepwise.bck.mallowsCp <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
   #   inc: an optional list of names of explanatory variables that 
   #        must be included into the final model
   #   ret.expl.vars: if TRUE, the function will return a list of selected
-  #                  exlanatory variables, otherwise a model including
+  #                  explanatory variables, otherwise a model including
   #                  the selected variables
   #
   # Returns:
@@ -622,7 +622,7 @@ stepwise.fwd.aic <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
   #   inc: an optional list of names of explanatory variables that 
   #        must be included into the final model
   #   ret.expl.vars: if TRUE, the function will return a list of selected
-  #                  exlanatory variables, otherwise a model including
+  #                  explanatory variables, otherwise a model including
   #                  the selected variables
   #
   # Returns:
@@ -655,7 +655,7 @@ stepwise.bck.aic <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
   #   inc: an optional list of names of explanatory variables that 
   #        must be included into the final model
   #   ret.expl.vars: if TRUE, the function will return a list of selected
-  #                  exlanatory variables, otherwise a model including
+  #                  explanatory variables, otherwise a model including
   #                  the selected variables
   #
   # Returns:
@@ -688,7 +688,7 @@ stepwise.fwd.bic <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
   #   inc: an optional list of names of explanatory variables that 
   #        must be included into the final model
   #   ret.expl.vars: if TRUE, the function will return a list of selected
-  #                  exlanatory variables, otherwise a model including
+  #                  explanatory variables, otherwise a model including
   #                  the selected variables
   #
   # Returns:
@@ -721,7 +721,7 @@ stepwise.bck.bic <- function(dframe, resp, inc=NULL, ret.expl.vars=TRUE)
   #   inc: an optional list of names of explanatory variables that 
   #        must be included into the final model
   #   ret.expl.vars: if TRUE, the function will return a list of selected
-  #                  exlanatory variables, otherwise a model including
+  #                  explanatory variables, otherwise a model including
   #                  the selected variables
   #
   # Returns:
@@ -755,7 +755,7 @@ stepwise.fwd.pval <- function(dframe, resp, alpha=0.05, inc=NULL, ret.expl.vars=
   #   inc: an optional list of names of explanatory variables that 
   #        must be included into the final model
   #   ret.expl.vars: if TRUE, the function will return a list of selected
-  #                  exlanatory variables, otherwise a model including
+  #                  explanatory variables, otherwise a model including
   #                  the selected variables
   #
   # Returns:
@@ -860,7 +860,7 @@ stepwise.bck.pval <- function(dframe, resp, alpha=0.05, inc=NULL, ret.expl.vars=
   #   inc: an optional list of names of explanatory variables that 
   #        must be included into the final model
   #   ret.expl.vars: if TRUE, the function will return a list of selected
-  #                  exlanatory variables, otherwise a model including
+  #                  explanatory variables, otherwise a model including
   #                  the selected variables
   #
   # Returns:
