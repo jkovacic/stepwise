@@ -184,7 +184,7 @@ source('critfunc.R')
   # concatenate it to the response variable
   mdl.str <- paste0(resp.var, " ~ ", paste(var.list, collapse=" + "))
   
-  return (as.formula(mdl.str))
+  return( as.formula(mdl.str) )
 }
 
 
