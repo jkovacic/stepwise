@@ -23,6 +23,11 @@
 #   source('/path/to/test.R')
 
 
+
+# Load the "library" file:
+source("stepwise.R")
+
+
 stepwiseTest <- function()
 {
 
@@ -119,11 +124,9 @@ stepwiseTest <- function()
 }
 
 
+
 #
 # Executes the actual tests in the function above
 #
-
-# Load the "library" file:
-source("stepwise.R")
 
 stepwiseTest()
