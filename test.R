@@ -1,3 +1,5 @@
+#!/usr/bin/env Rscript 
+
 # Copyright 2015, Jernej Kovacic
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
